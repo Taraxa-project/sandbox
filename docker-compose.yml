@@ -1,0 +1,91 @@
+version: '3'
+volumes:
+    taraxa_data:
+    mongodb_data:
+services:
+    taraxa-config:
+        container_name: taraxa-config
+        image: node:latest
+        volumes:
+            - taraxa_data:/var/taraxa
+        command: >
+            sh -c "npm i -g taraxa-cli &&
+                taraxa config -d /var/taraxa -g 0xe414bd813ca44201b5e109d8e8f1aab5db4000d9"
+    taraxa-node:
+        container_name: taraxa-node
+        image: taraxa/taraxa-node:25
+        restart: always
+        ports:
+            - "10002:10002"
+            - "10002:10002/udp"
+            - "7777:7777"
+            - "8777:8777"
+        expose:
+            - "10002"
+            - "7777"
+            - "8777"
+        command: ["--conf_taraxa", "/var/taraxa/conf/private.json", "--boot_node"]
+        volumes:
+            - taraxa_data:/var/taraxa
+        depends_on:
+            - taraxa-config
+    mongodb:
+        container_name: mongodb
+        image: mongo:latest
+        restart: always
+        ports:
+            - "27017:27017"
+        expose:
+            - "27017"
+        command: ["mongod", "--quiet"]
+        volumes: 
+            - mongodb_data:/data/db
+
+    taraxa-explorer-sync:
+        container_name: taraxa-explorer-sync
+        image: taraxa/explorer:latest
+        restart: always
+        environment:
+            - RPC_HTTP_PROVIDER=http://taraxa-node:7777
+            - RPC_WS_PROVIDER=ws://taraxa-node:8777
+            - MONGO_URI=mongodb://mongodb:27017/explorer-dev
+        depends_on:
+            - taraxa-node
+            - mongodb
+        command: ["node", "./worker/blockchain-sync", "-c", "/var/taraxa/conf/private.json"]
+        volumes:
+            - taraxa_data:/var/taraxa
+    taraxa-explorer:
+        container_name: taraxa-explorer
+        image: taraxa/explorer:latest
+        restart: always
+        environment:
+            - MONGO_URI=mongodb://mongodb:27017/explorer-dev
+        depends_on:
+            - mongodb
+        ports:
+            - "3000:3000"
+        command: ["npm", "start"]
+    taraxa-explorer-wsserver:
+        container_name: taraxa-explorer-wsserver
+        image: taraxa/explorer:latest
+        restart: always
+        environment:
+            - MONGO_URI=mongodb://mongodb:27017/explorer-dev
+        ports:
+            - "3001:3001"
+        depends_on:
+            - mongodb
+        command: ["node", "./ws-server"]
+    taraxa-faucet:
+        container_name: taraxa-faucet
+        image: taraxa/explorer:latest
+        restart: always
+        environment:
+            - MONGO_URI=mongodb://mongodb:27017/explorer-dev
+            - RPC_HTTP_PROVIDER=http://taraxa-node:7777
+            - RPC_WS_PROVIDER=ws://taraxa-node:8777
+        depends_on:
+            - taraxa-node
+            - mongodb
+        command: ["node", "./worker/faucet"]

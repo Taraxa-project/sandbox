@@ -14,3 +14,11 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.content {
+  padding: 20px
+}
+
+.bg-dark {
+  background-color: #0f1517 !important;
+}
