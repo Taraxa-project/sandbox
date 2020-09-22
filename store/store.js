@@ -8,6 +8,7 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 
 import key from './key/reducer'
 import provider from './provider/reducer'
+import wallet from './wallet/reducer'
 
 let store;
 
@@ -22,6 +23,7 @@ const bindMiddleware = (middleware) => {
 const combinedReducer = combineReducers({
   key,
   provider,
+  wallet,
 })
 
 const reducer = (state, action) => {
@@ -50,6 +52,10 @@ function makeStore(initialState = {
   },
   provider: {
     http: 'http://localhost:7777'
+  },
+  wallet: {
+    nonce: 0,
+    balance: 0
   }
 }) {
   return createStore(

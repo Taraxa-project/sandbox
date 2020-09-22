@@ -40,8 +40,8 @@ export default function Navigation() {
                     <Nav.Link href="/validator">Validator</Nav.Link>
                 </Link>
 
-                <Nav.Link href={explorerUrl}>Explorer</Nav.Link>
-                <Nav.Link href={explorerUrl+'/faucet'}>Faucet</Nav.Link>
+                <Nav.Link href={explorerUrl} target="_blank">Explorer</Nav.Link>
+                <Nav.Link href={explorerUrl+'/faucet'}  target="_blank">Faucet</Nav.Link>
 
                 <Link href="/settings" as={`/settings`}>
                     <Nav.Link href="/settings">Settings</Nav.Link>

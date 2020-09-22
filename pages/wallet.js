@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { ethers } from 'ethers'
 
@@ -11,7 +12,9 @@ import {Button, Container, Row, Col, Card, ListGroup, ListGroupItem, InputGroup,
 
 import Navbar from '../components/navbar';
 
-export function Home({privateKey, httpProvider}) {
+import { getBalance, getNonce } from '../store/wallet/action'
+
+export function Home({privateKey, httpProvider, balance, nonce, getBalance, getNonce}) {
 
   const [address, setAddress] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
@@ -50,7 +53,6 @@ export function Home({privateKey, httpProvider}) {
       } else {
         setSendAmount('');
       }
-      
   }
 
   function updateSendMemo(e) {
@@ -66,12 +68,14 @@ export function Home({privateKey, httpProvider}) {
   }
 
   useEffect(() => {
-    if(!privateKey){
-        console.log('No private key. Redirecting to /settings')
-        Router.push('/settings')
-    } else {
+    if(privateKey){
         let wallet = new ethers.Wallet(privateKey)
         setAddress(wallet.address);
+    }
+
+    if (address) {
+        getBalance(httpProvider, address);
+        getNonce(httpProvider, address);    
     }
   });
 
@@ -88,7 +92,7 @@ export function Home({privateKey, httpProvider}) {
                     <Row>
                         <Col xs={12} style={{fontSize: 14, marginRight: 5}}>
                             <div className="text-right">
-                                <span style={{width: 60, display: 'inline-block', textAlign: 'left'}}>Balance:</span> {0} TARA
+                                <span style={{width: 60, display: 'inline-block', textAlign: 'left'}}>Balance:</span> {balance.toLocaleString()} TARA
                             </div>
                         </Col>
                         <Col xs={12} style={{fontSize: 14, marginBottom: 10, marginRight: 5}}>
@@ -122,7 +126,6 @@ export function Home({privateKey, httpProvider}) {
                                 <Form.Label>Gas Price {gasPrice}</Form.Label>
                                 <Form.Control type="range" custom min="0" max="100" onChange={updateGasPrice} value={gasPrice}/>
                             </Form.Group>
-                            
                     
                         </Card.Body>
                         <Card.Footer>
@@ -159,7 +162,16 @@ const mapStateToProps = (state) => {
   return {
     privateKey: state.key.privateKey,
     httpProvider: state.provider.http,
+    balance: state.wallet.balance,
+    nonce: state.wallet.nonce,
   }
 }
 
-export default connect(mapStateToProps)(Home)
+const mapDispatchToProps = (dispatch) => {
+    return {
+      getBalance: bindActionCreators(getBalance, dispatch),
+      getNonce: bindActionCreators(getNonce, dispatch),
+    }
+  }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
