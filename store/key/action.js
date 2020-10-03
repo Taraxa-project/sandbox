@@ -1,10 +1,10 @@
 export const keyActionTypes = {
-    PRIVATEKEY: 'PRIVATEKEY',
+    MNEMONIC: 'MNEMONIC',
 }
 
-export const setPrivateKey = (privateKey) => (dispatch) => {
+export const setMnemonic = (mnemonic) => (dispatch) => {
     return dispatch({
-        type: keyActionTypes.PRIVATEKEY,
-        data: privateKey
+        type: keyActionTypes.MNEMONIC,
+        data: mnemonic
     })
 }

@@ -8,15 +8,14 @@ import QRCode from 'qrcode.react';
 import Link from 'next/link'
 import Router from 'next/router'
 
-import {Button, Container, Row, Col, Card, ListGroup, ListGroupItem, InputGroup, FormControl, Form} from 'react-bootstrap'
+import {Button, Container, Row, Col, Card, ListGroup, ListGroupItem, InputGroup, FormControl, Form, Dropdown} from 'react-bootstrap'
 
 import Navbar from '../components/navbar';
 
-import { getBalance, getNonce } from '../store/wallet/action'
+import { getBalance, getNonce, setPath, setPrivateKey, setAddress } from '../store/wallet/action'
 
-export function Home({privateKey, httpProvider, balance, nonce, getBalance, getNonce}) {
-
-  const [address, setAddress] = useState('');
+export function Home({privateKey, address = '', path, mnemonic, httpProvider, balance, nonce, getBalance, getNonce, setPath, setPrivateKey, setAddress}) {
+  const basePath = `m/44'/60'/0'/0/`;
   const [recipientAddress, setRecipientAddress] = useState('');
   const [sendAmount, setSendAmount] = useState('');
   const [sendMemo, setSendMemo] = useState('');
@@ -67,6 +66,15 @@ export function Home({privateKey, httpProvider, balance, nonce, getBalance, getN
     await navigator.clipboard.writeText(address);
   }
 
+  function setWalletAddress(i) {
+    const newWallet = ethers.Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/0/${i}`)
+    setPath(i);
+    setPrivateKey(newWallet.privateKey);
+    setAddress(newWallet.address);
+    getBalance(httpProvider, newWallet.address);
+    getNonce(httpProvider, newWallet.address);    
+  }
+
   useEffect(() => {
     if(privateKey){
         let wallet = new ethers.Wallet(privateKey)
@@ -77,7 +85,7 @@ export function Home({privateKey, httpProvider, balance, nonce, getBalance, getN
         getBalance(httpProvider, address);
         getNonce(httpProvider, address);    
     }
-  });
+  }, [privateKey, address]);
 
   return (
         <>
@@ -87,7 +95,8 @@ export function Home({privateKey, httpProvider, balance, nonce, getBalance, getN
             <Col xs={6}>
                 <h2>Wallet</h2>
             </Col>
-            <Col xs={6}>
+            
+            <Col xs={4}>
                 
                     <Row>
                         <Col xs={12} style={{fontSize: 14, marginRight: 5}}>
@@ -103,7 +112,23 @@ export function Home({privateKey, httpProvider, balance, nonce, getBalance, getN
                     </Row>
                
             </Col>
-                   
+            <Col xs={2}>
+              <div className="text-right">
+              <Dropdown>
+                <Dropdown.Toggle variant="link" id="dropdown-basic">
+                  Address # {path}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  {Array.from(Array(10).keys()).map((i) => {
+                    return (<Dropdown.Item key={`dd${i}`} onClick={() => {setWalletAddress(i)}}>{i} {basePath}{i}</Dropdown.Item>)
+                  })}
+                                    
+                </Dropdown.Menu>
+              </Dropdown>
+              </div>
+              
+            </Col>
           </Row>
           <Row>
             <Col sm={12} lg={7}>
@@ -160,7 +185,10 @@ export function Home({privateKey, httpProvider, balance, nonce, getBalance, getN
 
 const mapStateToProps = (state) => {
   return {
-    privateKey: state.key.privateKey,
+    address: state.wallet.address,
+    privateKey: state.wallet.privateKey,
+    path: state.wallet.path,
+    mnemonic: state.key.mnemonic,
     httpProvider: state.provider.http,
     balance: state.wallet.balance,
     nonce: state.wallet.nonce,
@@ -171,6 +199,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
       getBalance: bindActionCreators(getBalance, dispatch),
       getNonce: bindActionCreators(getNonce, dispatch),
+      setPath: bindActionCreators(setPath, dispatch),
+      setPrivateKey: bindActionCreators(setPrivateKey, dispatch),
+      setAddress: bindActionCreators(setAddress, dispatch),
     }
   }
 

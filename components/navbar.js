@@ -40,15 +40,11 @@ export default function Navigation() {
                     <Nav.Link href="/validator">Validator</Nav.Link>
                 </Link>
 
-                <Nav.Link href={explorerUrl} target="_blank">Explorer</Nav.Link>
-                <Nav.Link href={explorerUrl+'/faucet'}  target="_blank">Faucet</Nav.Link>
+                <Nav.Link href={explorerUrl} target="explorer">Explorer</Nav.Link>
+                <Nav.Link href={explorerUrl+'/faucet'}  target="explorer">Faucet</Nav.Link>
 
                 <Link href="/settings" as={`/settings`}>
                     <Nav.Link href="/settings">Settings</Nav.Link>
-                </Link>
-                
-                <Link href="/logout" as={`/logout`}>
-                    <Nav.Link href="/logout">Logout</Nav.Link>
                 </Link>
             </Nav>
         </Navbar.Collapse>

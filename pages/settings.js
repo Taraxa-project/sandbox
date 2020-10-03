@@ -10,17 +10,34 @@ import styles from '../styles/Login.module.css'
 import {Button, Container, Row, Col, Card, ListGroup, ListGroupItem, Form, Navbar} from 'react-bootstrap'
 
 import { ethers } from 'ethers'
-import { setPrivateKey } from '../store/key/action'
+import { setMnemonic } from '../store/key/action'
+import { setAddress, setPath, setPrivateKey } from '../store/wallet/action'
+
 import { setHttpProvider } from '../store/provider/action'
 
-export function Login({privateKey, httpProvider, setPrivateKey, setHttpProvider}) {
+export function Login({mnemonic, address, privateKey, path, httpProvider, setHttpProvider, setMnemonic, setPath, setPrivateKey, setAddress}) {
     const inputFile = useRef(null) 
-    const [newKey, setNewKey] = useState(privateKey);
+    const [newMnemonic, setNewMnemonic] = useState(mnemonic);
+    const [newPath, setNewPath] = useState(path);
+    const [newAddress, setNewAddress] = useState(address);
+    const [newPrivateKey, setNewPrivateKey] = useState(privateKey);
     const [newHttpProvider, setNewHttpProvider] = useState(httpProvider);
 
-    function createNewKey() {
-        const wallet = ethers.Wallet.createRandom();
-        setNewKey(wallet.privateKey);
+    function createNewMnemonic() {
+      const wallet = ethers.Wallet.createRandom();
+      console.log(wallet.address, wallet.mnemonic)
+      setNewMnemonic(wallet.mnemonic.phrase);
+      setNewPath(wallet.mnemonic.path);
+      setNewPrivateKey(wallet.privateKey);
+      setNewAddress(wallet.address);
+
+      // const wallets = [wallet];
+      // for (var i = 1; i < 10; i++) {
+      //   const newWallet = ethers.Wallet.fromMnemonic(wallet.mnemonic.phrase, `m/44'/60'/0'/0/${i}`)
+      //   console.log(i, newWallet.address, newWallet.mnemonic)
+      //   wallets.push(newWallet)
+      // }
+      // return wallets;
     }
 
     function importFromFile(e) {
@@ -28,10 +45,9 @@ export function Login({privateKey, httpProvider, setPrivateKey, setHttpProvider}
         const reader = new FileReader()
         reader.onload = async (e) => { 
           const text = (e.target.result)
-          console.log('Imported Text', text);
           try {
-            const wallet = new ethers.Wallet(text);
-            setNewKey(wallet.privateKey);
+            const newWallet = ethers.Wallet.fromMnemonic(text);
+            setNewMnemonic(text);
           } catch (e) {
               alert('Could not import key: ' + e.message);
           }
@@ -50,13 +66,16 @@ export function Login({privateKey, httpProvider, setPrivateKey, setHttpProvider}
 
     function login() {
         setHttpProvider(newHttpProvider);
-        setPrivateKey(newKey);
+        setMnemonic(newMnemonic);
+        setPath(0);
+        setPrivateKey(newPrivateKey);
+        setAddress(newAddress);
         Router.push('/wallet')
     }
 
     useEffect(() => {
-        if(!newKey) {
-            createNewKey();
+        if(!newMnemonic) {
+            createNewMnemonic();
         }
     })
 
@@ -94,13 +113,13 @@ export function Login({privateKey, httpProvider, setPrivateKey, setHttpProvider}
               <Card.Body>
                 <Form>
                   <Form.Group controlId="loginForm.privateKey">
-                    <Form.Label>Private Key</Form.Label>
-                    <Form.Control as="textarea" rows="3" value={newKey} readOnly/>
+                    <Form.Label>Mnemonic Phrase</Form.Label>
+                    <Form.Control as="textarea" rows="3" value={newMnemonic} readOnly/>
                   </Form.Group>
-                  <Button variant="outline-dark" onClick={createNewKey} style={{margin: 5}}>Generate New Key</Button>{' '}
+                  <Button variant="outline-dark" onClick={createNewMnemonic} style={{margin: 5}}>Generate New Phrase</Button>{' '}
                   <Button variant="outline-dark" onClick={onUploadClick} style={{margin: 5}}>Import from a file</Button>{' '}
                   <input type='file' id='file' ref={inputFile} style={{display: 'none'}} onChange={importFromFile}/>
-                  <Button variant="outline-dark" href={"data:text/plain,"+encodeURIComponent(newKey)} download={'floret_key.txt'} style={{margin: 5}}>Download Key</Button>
+                  <Button variant="outline-dark" href={"data:text/plain,"+encodeURIComponent(newMnemonic)} download={'taraxa_mnemonic.txt'} style={{margin: 5}}>Download Phrase</Button>
                   <br/><br/>
                   <Form.Group controlId="loginForm.httpAPI">
                     <Form.Label>HTTP API</Form.Label>
@@ -120,15 +139,21 @@ export function Login({privateKey, httpProvider, setPrivateKey, setHttpProvider}
 
 const mapStateToProps = (state) => {
     return {
-      privateKey: state.key.privateKey,
+      address: state.wallet.address,
+      path: state.wallet.path,
+      privateKey: state.wallet.privateKey,
+      mnemonic: state.key.mnemonic,
       httpProvider: state.provider.http,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setPrivateKey: bindActionCreators(setPrivateKey, dispatch),
         setHttpProvider: bindActionCreators(setHttpProvider, dispatch),
+        setMnemonic: bindActionCreators(setMnemonic, dispatch),
+        setPath: bindActionCreators(setPath, dispatch),
+        setPrivateKey: bindActionCreators(setPrivateKey, dispatch),
+        setAddress: bindActionCreators(setAddress, dispatch),
     }
 }
   

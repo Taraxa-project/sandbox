@@ -1,14 +1,14 @@
 import { keyActionTypes } from './action'
 
 const keyInitialState = {
-  privateKey: '',
+  mnemonic: '',
 }
 
 export default function reducer(state = keyInitialState, action) {
   switch (action.type) {
-    case keyActionTypes.PRIVATEKEY:
+    case keyActionTypes.MNEMONIC:
       return Object.assign({}, state, {
-        privateKey: action.data,
+        mnemonic: action.data,
       })
     default:
       return state

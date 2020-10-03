@@ -2,7 +2,10 @@ import taraxa from "taraxa-js"
 
 export const walletActionTypes = {
     SETNONCE: 'SETNONCE',
-    SETBALANCE: 'SETBALANCE'
+    SETBALANCE: 'SETBALANCE',
+    PRIVATEKEY: 'PRIVATEKEY',
+    PATH: 'PATH',
+    ADDRESS: 'ADDRESS'
 }
 
 export const getBalance = (rpcHost, address) => async (dispatch) => {
@@ -32,4 +35,25 @@ export const getNonce = (rpcHost, address) => async (dispatch) => {
     } catch (e) {
         console.error('Get nonce error', e);
     }
+}
+
+export const setPath = (path) => (dispatch) => {
+    return dispatch({
+        type: walletActionTypes.PATH,
+        data: path
+    })
+}
+
+export const setPrivateKey = (privateKey) => (dispatch) => {
+    return dispatch({
+        type: walletActionTypes.PRIVATEKEY,
+        data: privateKey
+    })
+}
+
+export const setAddress = (address) => (dispatch) => {
+    return dispatch({
+        type: walletActionTypes.ADDRESS,
+        data: address
+    })
 }
