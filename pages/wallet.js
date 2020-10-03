@@ -30,7 +30,7 @@ export function Home({privateKey, address = '', path, mnemonic, httpProvider, ba
         // from: address,
         to: recipientAddress,
         value: sendAmount,
-        gasLimit: 0,
+        gasLimit: 21000,
         gasPrice
     });
 
