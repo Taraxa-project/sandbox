@@ -30,14 +30,6 @@ export function Login({mnemonic, address, privateKey, path, httpProvider, setHtt
       setNewPath(wallet.mnemonic.path);
       setNewPrivateKey(wallet.privateKey);
       setNewAddress(wallet.address);
-
-      // const wallets = [wallet];
-      // for (var i = 1; i < 10; i++) {
-      //   const newWallet = ethers.Wallet.fromMnemonic(wallet.mnemonic.phrase, `m/44'/60'/0'/0/${i}`)
-      //   console.log(i, newWallet.address, newWallet.mnemonic)
-      //   wallets.push(newWallet)
-      // }
-      // return wallets;
     }
 
     function importFromFile(e) {
@@ -100,7 +92,7 @@ export function Login({mnemonic, address, privateKey, path, httpProvider, setHtt
           <Row className="align-items-center">
             <Col sm={12} lg={5}>
               <div style={{width: 360, marginLeft: 'auto', marginRight: 'auto'}}>
-                <h2>Welcome to Floret</h2>
+                <h2>Welcome to Taraxa Sandbox</h2>
                   <p>Please enter your wallet's private key, and <br/>
                   Taraxa Explorer API address to continue.</p>
               </div>

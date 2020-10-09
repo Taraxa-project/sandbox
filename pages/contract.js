@@ -1,64 +1,85 @@
+import { useEffect, useState } from 'react';
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+
 import Navbar from '../components/navbar';
+import Walletbar from '../components/walletbar';
 
-import {Button, Container, Row, Col, Card, ListGroup, ListGroupItem, InputGroup, FormControl, Form} from 'react-bootstrap'
+import { setReleases } from '../store/solidity/action'
 
-export default function Contract({balance = 0}) {
+
+import {Button, Container, Row, Col, Card, Form} from 'react-bootstrap'
+
+import { ethers } from 'ethers'
+
+export function Contract({balance = 0, solidityReleases, setReleases}) {
+    function importFromFile(e) {
+        e.preventDefault();
+        const reader = new FileReader()
+        reader.onload = async (e) => { 
+          const text = (e.target.result)
+          try {
+            const newWallet = ethers.Wallet.fromMnemonic(text);
+            setNewMnemonic(text);
+          } catch (e) {
+              alert('Could not import key: ' + e.message);
+          }
+        };
+        reader.readAsText(e.target.files[0])
+    }
+
+    useEffect(() => {
+        fetch('https://solc-bin.ethereum.org/bin/list.json')
+        .then(response => response.json())
+        .then(data => {
+            setReleases(data.releases)
+            console.log('Updated state with solidity releases', data.releases);
+        });
+    }, [])
 
     return (
         <>
             <Navbar/>
+            <Walletbar pageTitle={"Contract"}/>
             <Container className="content">
-          <Row>
-            <Col xs={6}>
-                <h2>Contract</h2>
-            </Col>
-            <Col xs={6}>
-                
-                    <Row>
-                        <Col xs={12} style={{fontSize: 14, marginRight: 5}}>
-                            <div className="text-right">
-                                <span style={{width: 60, display: 'inline-block', textAlign: 'left'}}>Balance:</span> {balance.toLocaleString()} TARA
-                            </div>
-                        </Col>
-                        <Col xs={12} style={{fontSize: 14, marginBottom: 10, marginRight: 5}}>
-                            <div className="text-right">
-                                <span style={{width: 60, display: 'inline-block', textAlign: 'left'}}>Stake:</span> {0} TARA
-                            </div>
-                        </Col>
-                    </Row>
-               
-            </Col>
-                   
-          </Row>
-          <Row>
-            <Col sm={12} lg={6}>
-                <Form>
-                    <Card style={{marginBottom: 10}}>
-                        <Card.Header>
-                        Add a Smart Contract
-                        </Card.Header>
-                        <Card.Body>
-                            <Form.Group controlId="contract.depositGas">
-                                <Form.Control type="number" placeholder="Deposit Gas (optional)" />
-                            </Form.Group>
-                            <Form.Group controlId="contract.gasLimit">
-                                <Form.Control type="number" min="0" placeholder="Gas Limit" />
-                            </Form.Group>
+                <Row>
+                    <Col sm={12} lg={6}>
+                        <Form>
+                            <Card style={{marginBottom: 10}}>
+                                <Card.Header>
+                                    Add a Smart Contract
+                                </Card.Header>
+                                <Card.Body>
 
-                            <Form.File id="formcheck-api-regular">
-                                <Form.File.Label>Select contract file:</Form.File.Label>
-                                <Form.File.Input />
-                            </Form.File>
-                    
-                        </Card.Body>
-                        <Card.Footer>
-                            <Button variant="success">Upload Smart Contract</Button>
-                        </Card.Footer>
-                    </Card>
-                </Form>
-            </Col>
-          </Row>
-      </Container>
+                                    <Form.File id="formcheck-api-regular">
+                                        <Form.File.Label>Select solidity contract:</Form.File.Label>
+                                        <Form.File.Input onChange={importFromFile} accept=".sol"/>
+                                    </Form.File>
+                            
+                                </Card.Body>
+                                <Card.Footer>
+                                    <Button variant="success">Load Smart Contract</Button>
+                                </Card.Footer>
+                            </Card>
+                        </Form>
+                    </Col>
+                </Row>
+            </Container>
         </>
     )
 }
+
+const mapStateToProps = (state) => {
+    return {
+      solidityReleases: state.solidity.releases,
+      balance: state.wallet.balance,
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setReleases: bindActionCreators(setReleases, dispatch),
+    }
+}
+  
+export default connect(mapStateToProps, mapDispatchToProps)(Contract)

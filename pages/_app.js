@@ -16,7 +16,7 @@ export default function MyApp({ Component, pageProps }) {
 return (
   <Provider store={store}>
      <Head>
-      <title>Taraxa · Floret Sandbox</title>
+      <title>Taraxa · Sandbox</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <PersistGate loading={<Component {...pageProps} />} persistor={persistor}>

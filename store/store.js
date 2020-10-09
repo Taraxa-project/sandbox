@@ -9,6 +9,7 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 import key from './key/reducer'
 import provider from './provider/reducer'
 import wallet from './wallet/reducer'
+import solidity from './solidity/reducer'
 
 let store;
 
@@ -24,6 +25,7 @@ const combinedReducer = combineReducers({
   key,
   provider,
   wallet,
+  solidity,
 })
 
 const reducer = (state, action) => {
