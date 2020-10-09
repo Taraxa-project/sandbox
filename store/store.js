@@ -10,6 +10,8 @@ import key from './key/reducer'
 import provider from './provider/reducer'
 import wallet from './wallet/reducer'
 import solidity from './solidity/reducer'
+import contract from './contract/reducer'
+
 
 let store;
 
@@ -26,6 +28,7 @@ const combinedReducer = combineReducers({
   provider,
   wallet,
   solidity,
+  contract,
 })
 
 const reducer = (state, action) => {

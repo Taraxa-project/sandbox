@@ -26,3 +26,8 @@ a {
 .bg-dark {
   background-color: #0f1517 !important;
 }
+
+.fileList {
+  list-style-type: none;
+  padding-left: 0px;
+}

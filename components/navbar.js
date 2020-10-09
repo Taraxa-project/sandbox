@@ -32,12 +32,12 @@ export default function Navigation() {
                     <Nav.Link href="/wallet">Wallet</Nav.Link>
                 </Link>
 
-                <Link href="/contract" as={`/contract`}>
-                    <Nav.Link href="/contract">Contract</Nav.Link>
+                <Link href="/contracts" as={`/contracts`}>
+                    <Nav.Link href="/contracts">Contracts</Nav.Link>
                 </Link>
 
-                <Link href="/validator" as={`/validator`}>
-                    <Nav.Link href="/validator">Validator</Nav.Link>
+                <Link href="/staking" as={`/staking`}>
+                    <Nav.Link href="/staking">Staking</Nav.Link>
                 </Link>
 
                 <Nav.Link href={explorerUrl} target="explorer">Explorer</Nav.Link>
