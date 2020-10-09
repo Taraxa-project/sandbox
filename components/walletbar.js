@@ -37,11 +37,11 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
         <>
         <Container className="walletbar">
           <Row>
-            <Col xs={6} sm={8} className={"my-auto"}>
+            <Col xs={6} lg={8} className={"my-auto"}>
                 <h2>{pageTitle}</h2>
             </Col>
             
-            <Col xs={{order: 'last', cols: 12}} sm={2}>
+            <Col xs={{order: 'last', cols: 12}} lg={2}>
                 <Table style={{margin: 0}}>
                     <tbody>
                         <tr>
@@ -72,7 +72,7 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
                 </Table>
                
             </Col>
-            <Col xs={6} sm={{order: 'last', cols: 2}} className={"my-auto"} >
+            <Col xs={6} lg={{order: 'last', cols: 2}} className={"my-auto"} >
               <div className="text-right">
               <Dropdown>
                 <Dropdown.Toggle variant="link" id="dropdown-basic" style={{paddingRight: 0}}>

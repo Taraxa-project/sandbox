@@ -31,7 +31,7 @@ export function Contract({name, contracts, solidityReleases}) {
             <Walletbar pageTitle={name}/>
             <Container className="content">
                 <Row>
-                    <Col xs={2}>
+                    <Col xs={{order: 'last', col: 12}} lg={{order: 'first', col: 2}}>
                         <ListGroup>
                             {Object.keys(contracts).sort().map(contractName => (
                                 <ListGroup.Item key={contractName} active={contractName === name}>
@@ -42,7 +42,7 @@ export function Contract({name, contracts, solidityReleases}) {
                             ))}
                         </ListGroup>
                     </Col>
-                    <Col xs={10}>
+                    <Col xs={12} lg={10}>
                         <Nav variant="pills" defaultActiveKey={view} style={{marginBottom: 20}}>
                             <Nav.Item>
                                 <Nav.Link eventKey="source" onClick={(() => {changeView('source')})}>Source</Nav.Link>
@@ -61,23 +61,25 @@ export function Contract({name, contracts, solidityReleases}) {
                                 fontSize: 14, 
                                 fontFamily: 'courier', 
                                 width: '100%', 
-                                minHeight: 600, 
+                                minHeight: 550, 
                                 borderWidth: 1, 
                                 borderColor: '#eee', 
                                 borderStyle: 'solid', 
                                 padding: 10,
-                                display: view === 'source' ? 'block' : 'none'
+                                display: view === 'source' ? 'block' : 'none',
+                                marginBottom: 20
                             }} 
                             value={contracts[name]?.text}/>
 
                         <div style={{
                             display: view === 'compile' ? 'block' : 'none',
+                            marginBottom: 20
                         }}>
                             <Form.Group as={Row} controlId="solidityChooser">
                                 <Form.Label column sm="2">
                                     Solidity Version
                                 </Form.Label>
-                                <Col sm="10">
+                                <Col sm="2">
                                     <Form.Control as="select">
                                         {Object.keys(solidityReleases).map(ver => (
                                             <option key={ver} value={ver}>{ver}</option>
@@ -89,7 +91,8 @@ export function Contract({name, contracts, solidityReleases}) {
                         </div>
 
                         <div style={{
-                            display: view === 'deploy' ? 'block' : 'none'
+                            display: view === 'deploy' ? 'block' : 'none',
+                            marginBottom: 20
                         }}>
                             ...deployment stuff
                         </div>
