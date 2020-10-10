@@ -1,11 +1,13 @@
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import {useState} from 'react';
+
+import Link from 'next/link'
+
 import Navbar from '../../components/navbar';
 import Walletbar from '../../components/walletbar';
 
-import {useState} from 'react';
-
-import { connect } from 'react-redux'
-
-import Link from 'next/link'
+import {setSolidityVersion} from '../../store/solidity/action'
 
 import {Button, Container, Row, Col, Card, Form, ListGroup, Nav} from 'react-bootstrap'
 
@@ -17,12 +19,18 @@ export async function getServerSideProps(context) {
     return {props}
 }
 
-export function Contract({name, contracts, solidityReleases}) {
+export function Contract({name, contracts, solidityReleases, solidityVersion, setSolidityVersion, compiled, deployed}) {
 
     const [view, setView] = useState('source')
 
     function changeView(view) {
         setView(view)
+    }
+
+    function updateSolidityVersion(e) {
+        const ver = e.target.value
+        console.log('update solidity version', ver)
+        setSolidityVersion(ver);
     }
 
     return (
@@ -31,17 +39,16 @@ export function Contract({name, contracts, solidityReleases}) {
             <Walletbar pageTitle={name}/>
             <Container className="content">
                 <Row>
-                    <Col xs={{order: 'last', col: 12}} lg={{order: 'first', col: 2}}>
-                        <ListGroup>
-                            {Object.keys(contracts).sort().map(contractName => (
-                                <ListGroup.Item key={contractName} active={contractName === name}>
-                                    {contractName === name ? contractName : ( <Link href="/contract/[id]" as={`/contract/${contractName}`}>
-                                        <a>{`${contractName}`}</a>
-                                    </Link>)}
-                                </ListGroup.Item>
-                            ))}
-                        </ListGroup>
+                    <Col>
+                        <h3 style={{paddingBottom: 10}}>{name}</h3>
+                        <p>
+                            Compiled: {compiled}<br/>
+                            Deployed: {deployed}
+                        </p>
                     </Col>
+                </Row>
+                <Row>
+                   
                     <Col xs={12} lg={10}>
                         <Nav variant="pills" defaultActiveKey={view} style={{marginBottom: 20}}>
                             <Nav.Item>
@@ -69,25 +76,28 @@ export function Contract({name, contracts, solidityReleases}) {
                                 display: view === 'source' ? 'block' : 'none',
                                 marginBottom: 20
                             }} 
-                            value={contracts[name]?.text}/>
+                            value={contracts[name]?.text} readOnly/>
 
                         <div style={{
                             display: view === 'compile' ? 'block' : 'none',
                             marginBottom: 20
                         }}>
-                            <Form.Group as={Row} controlId="solidityChooser">
-                                <Form.Label column sm="2">
-                                    Solidity Version
-                                </Form.Label>
-                                <Col sm="2">
-                                    <Form.Control as="select">
-                                        {Object.keys(solidityReleases).map(ver => (
-                                            <option key={ver} value={ver}>{ver}</option>
-                                        ))}
-                                        
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
+                            <Form>
+                                <Form.Group as={Row}>
+                                    <Form.Label column sm="2">
+                                        Solidity Version
+                                    </Form.Label>
+                                    <Col sm="2">
+                                        <Form.Control id="selectSolidityVer" as="select" onChange={updateSolidityVersion} defaultValue={solidityVersion}>
+                                            {Object.keys(solidityReleases).map(ver => (
+                                                <option key={ver} value={ver}>{ver}</option>
+                                            ))}
+                                        </Form.Control>
+                                        <br/>
+                                        <Button>Compile</Button>
+                                    </Col>
+                                </Form.Group>
+                            </Form>
                         </div>
 
                         <div style={{
@@ -96,6 +106,19 @@ export function Contract({name, contracts, solidityReleases}) {
                         }}>
                             ...deployment stuff
                         </div>
+                    </Col>
+
+                    <Col xs={{order: 'last', cols: 12}} lg={{order: 'last', cols: 2}}>
+                        Files:
+                        <ListGroup>
+                            {Object.keys(contracts).sort().map(contractName => (
+                                <ListGroup.Item key={contractName} active={contractName === name}>
+                                    {contractName === name ? contractName : ( <Link href="/contract/[id]" as={`/contract/${contractName}`}>
+                                        <a>{`${contractName}`}</a>
+                                    </Link>)}
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
                     </Col>
                 </Row>
             
@@ -107,8 +130,15 @@ export function Contract({name, contracts, solidityReleases}) {
 const mapStateToProps = (state) => {
     return {
       solidityReleases: state.solidity.releases,
+      solidityVersion: state.solidity.version,
       contracts: state.contract.sources,
     }
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+      setSolidityVersion: bindActionCreators(setSolidityVersion, dispatch),
+    }
+  }
   
-export default connect(mapStateToProps)(Contract)
+export default connect(mapStateToProps, mapDispatchToProps)(Contract)

@@ -39,11 +39,8 @@ export function Contracts({balance = 0, contracts, solidityReleases, setReleases
         .then(response => response.json())
         .then(data => {
             setReleases(data.releases)
-            console.log('Updated state with solidity releases', data.releases);
         });
     }, [])
-
-    console.log('contracts', contracts)
 
     return (
         <>
