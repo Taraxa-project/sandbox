@@ -1,13 +1,15 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 import Link from 'next/link'
+import Head from 'next/head'
 
 import Navbar from '../../components/navbar';
 import Walletbar from '../../components/walletbar';
 
-import {setSolidityVersion} from '../../store/solidity/action'
+import {setSolidityVersion, setReleases} from '../../store/solidity/action'
+import {setContractCompiled} from '../../store/contract/action'
 
 import {Button, Container, Row, Col, Card, Form, ListGroup, Nav} from 'react-bootstrap'
 
@@ -19,7 +21,7 @@ export async function getServerSideProps(context) {
     return {props}
 }
 
-export function Contract({name, contracts, solidityReleases, solidityVersion, setSolidityVersion, compiled, deployed}) {
+export function Contract({name, contracts, solidityReleases, solidityVersion, setSolidityVersion, setReleases, setContractCompiled}) {
 
     const [view, setView] = useState('source')
 
@@ -28,29 +30,58 @@ export function Contract({name, contracts, solidityReleases, solidityVersion, se
     }
 
     function updateSolidityVersion(e) {
+        e.preventDefault()
         const ver = e.target.value
         console.log('update solidity version', ver)
         setSolidityVersion(ver);
     }
 
+    function compile(solidityVersion, name, source) {
+        console.log(solidityVersion, name, source)
+        fetch('/api/compile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({solidityVersion, name, source}) // body data type must match "Content-Type" header 
+        })
+        .then(res => res.json())
+        .then(compiled => {
+            setContractCompiled(compiled);
+        })
+    }
+
+    useEffect(() => {
+        fetch('https://solc-bin.ethereum.org/bin/list.json')
+        .then(response => response.json())
+        .then(data => {
+            setReleases(data.releases)
+            if(!solidityVersion) {
+                setSolidityVersion(Object.keys(data.releases).sort().reverse()[0])
+            }
+        });
+    }, [])
+
     return (
         <>
             <Navbar/>
-            <Walletbar pageTitle={name}/>
             <Container className="content">
                 <Row>
                     <Col>
-                        <h3 style={{paddingBottom: 10}}>{name}</h3>
-                        <p>
-                            Compiled: {compiled}<br/>
-                            Deployed: {deployed}
-                        </p>
+                        <h4 style={{paddingBottom: 10, margin: 0}}>{name}</h4>
                     </Col>
                 </Row>
                 <Row>
-                   
+                    <Col xs={12} lg={2}>
+                            Compiled: {contracts[name]?.compiled ? 'true' : 'false'}
+                    </Col>
+                    <Col>
+                            Deployed: {contracts[name]?.deployed || 'false'}
+                    </Col>
+                </Row>
+                <Row>
                     <Col xs={12} lg={10}>
-                        <Nav variant="pills" defaultActiveKey={view} style={{marginBottom: 20}}>
+                        <Nav variant="pills" defaultActiveKey={view} style={{marginBottom: 20, marginTop: 20}}>
                             <Nav.Item>
                                 <Nav.Link eventKey="source" onClick={(() => {changeView('source')})}>Source</Nav.Link>
                             </Nav.Item>
@@ -88,13 +119,13 @@ export function Contract({name, contracts, solidityReleases, solidityVersion, se
                                         Solidity Version
                                     </Form.Label>
                                     <Col sm="2">
-                                        <Form.Control id="selectSolidityVer" as="select" onChange={updateSolidityVersion} defaultValue={solidityVersion}>
+                                        <Form.Control id="selectSolidityVer" as="select" onChange={updateSolidityVersion} value={solidityVersion}>
                                             {Object.keys(solidityReleases).map(ver => (
                                                 <option key={ver} value={ver}>{ver}</option>
                                             ))}
                                         </Form.Control>
                                         <br/>
-                                        <Button>Compile</Button>
+                                        <Button onClick={() => {compile(solidityReleases[solidityVersion], name, contracts[name].text)}}>Compile</Button>
                                     </Col>
                                 </Form.Group>
                             </Form>
@@ -104,7 +135,7 @@ export function Contract({name, contracts, solidityReleases, solidityVersion, se
                             display: view === 'deploy' ? 'block' : 'none',
                             marginBottom: 20
                         }}>
-                            ...deployment stuff
+                            <Walletbar/>
                         </div>
                     </Col>
 
@@ -131,13 +162,15 @@ const mapStateToProps = (state) => {
     return {
       solidityReleases: state.solidity.releases,
       solidityVersion: state.solidity.version,
-      contracts: state.contract.sources,
+      contracts: state.contract.filenames,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
+      setReleases: bindActionCreators(setReleases, dispatch),
       setSolidityVersion: bindActionCreators(setSolidityVersion, dispatch),
+      setContractCompiled: bindActionCreators(setContractCompiled, dispatch),
     }
   }
   

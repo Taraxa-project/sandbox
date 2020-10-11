@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -7,14 +6,11 @@ import Link from 'next/link'
 import Navbar from '../components/navbar';
 import Walletbar from '../components/walletbar';
 
-import { setReleases } from '../store/solidity/action'
 import { addContractSource } from '../store/contract/action'
 
-import {Button, Container, Row, Col, Card, Form} from 'react-bootstrap'
+import {Button, Container, Row, Col, Card, Form, ListGroup} from 'react-bootstrap'
 
-import { ethers } from 'ethers'
-
-export function Contracts({balance = 0, contracts, solidityReleases, setReleases, addContractSource}) {
+export function Contracts({contracts, addContractSource, version}) {
 
     function importFromFile(e) {
         e.preventDefault();
@@ -22,25 +18,13 @@ export function Contracts({balance = 0, contracts, solidityReleases, setReleases
         const reader = new FileReader()
         reader.onload = async (e) => { 
           const text = (e.target.result)
-          try {
             addContractSource({
                 name,
                 text
             });
-          } catch (e) {
-              alert('Could not import key: ' + e.message);
-          }
         };
         reader.readAsText(e.target.files[0])
     }
-
-    useEffect(() => {
-        fetch('https://solc-bin.ethereum.org/bin/list.json')
-        .then(response => response.json())
-        .then(data => {
-            setReleases(data.releases)
-        });
-    }, [])
 
     return (
         <>
@@ -62,9 +46,6 @@ export function Contracts({balance = 0, contracts, solidityReleases, setReleases
                                     </Form.File>
                             
                                 </Card.Body>
-                                <Card.Footer>
-                                    <Button variant="success">Load Smart Contract</Button>
-                                </Card.Footer>
                             </Card>
                         </Form>
                     </Col>
@@ -74,24 +55,21 @@ export function Contracts({balance = 0, contracts, solidityReleases, setReleases
                                 <Card.Header>
                                     Contracts
                                 </Card.Header>
-                                <Card.Body>
-                                    <ul className="fileList">
+                                    <ListGroup>
                                         {Object.keys(contracts).sort().map(name => (
-                                            <li key={name}>
+                                            <ListGroup.Item key={name}>
                                                  <Link href="/contract/[id]" as={`/contract/${name}`}>
                                                     <a>{`${name}`}</a>
                                                 </Link>
-                                                <ul>
+                                                <ul className="fileList">
                                                     <li style={{fontSize: 11}}>Created: {new Date(contracts[name]?.loaded).toLocaleString()}</li>
                                                     <li style={{fontSize: 11}}>Source Size: {contracts[name]?.text?.length}</li>
                                                     <li style={{fontSize: 11}}>Compiled: {contracts[name]?.compiled ? 'true' : 'false'}</li>
                                                     <li style={{fontSize: 11}}>Deployed: {contracts[name]?.deployed ? 'true' : 'false'}</li>
                                                 </ul>
-                                            </li>
+                                            </ListGroup.Item>
                                         ))}
-                                    </ul>
-                                </Card.Body>
-                               
+                                   </ListGroup>
                             </Card>
                         </Form>
                     </Col>
@@ -103,15 +81,13 @@ export function Contracts({balance = 0, contracts, solidityReleases, setReleases
 
 const mapStateToProps = (state) => {
     return {
-      solidityReleases: state.solidity.releases,
-      balance: state.wallet.balance,
-      contracts: state.contract.sources,
+      contracts: state.contract.filenames,
+      version: state.contract.version,
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setReleases: bindActionCreators(setReleases, dispatch),
         addContractSource: bindActionCreators(addContractSource, dispatch),
     }
 }

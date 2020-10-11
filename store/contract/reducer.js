@@ -1,24 +1,26 @@
 import { actionTypes } from './action'
 
 const initialState = {
-  sources: {},
+  version: 0,
+  filenames: {},
 }
 
 export default function reducer(state = initialState, action) {
   const temp = Object.assign({}, state);
-  let name = action?.data?.name;
+  temp.version = state.version + 1;
+
   switch (action.type) {
     case actionTypes.ADDSOURCE:
-      const {text} = action.data;
-      temp.sources[name] = {text, loaded: (new Date()).valueOf(), compiled: false, deployed: false};
+      const {text, name: sourceName} = action.data;
+      temp.filenames[sourceName] = {text, loaded: (new Date()).valueOf(), compiled: false, deployed: false};
       return Object.assign({}, state, temp);
     case actionTypes.COMPILED:
-      const {solidityVersion} = action.data;
-      temp.sources[action.data].compiled = solidityVersion;
+      const {name: compiledName, solidityVersion, source, compiled} = action.data;
+      temp.filenames[compiledName]= {solidityVersion, text: source, compiled, deployed: false};
       return Object.assign({}, state, temp);
     case actionTypes.DEPLOYED:
-      const {address} = action.data;
-      temp.sources[action.data].deployed = address;
+      const {name: deployedName, address} = action.data;
+      temp.filenames[deployedName].deployed = address;
       return Object.assign({}, state, temp);
     default:
       return state
