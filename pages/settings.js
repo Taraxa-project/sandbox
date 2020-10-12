@@ -25,7 +25,6 @@ export function Login({mnemonic, address, privateKey, path, httpProvider, setHtt
 
     function createNewMnemonic() {
       const wallet = ethers.Wallet.createRandom();
-      console.log(wallet.address, wallet.mnemonic)
       setNewMnemonic(wallet.mnemonic.phrase);
       setNewPath(wallet.mnemonic.path);
       setNewPrivateKey(wallet.privateKey);

@@ -5,7 +5,6 @@ export const actionTypes = {
 }
 
 export const addContractSource = (data) => (dispatch) => {
-    console.log('ADDSOURCE action', data.name, data.text)
     return dispatch({
         type: actionTypes.ADDSOURCE,
         data

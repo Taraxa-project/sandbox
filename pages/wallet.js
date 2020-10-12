@@ -30,8 +30,6 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
         gasPrice
     });
 
-    console.log(tx)
-
     setRecipientAddress('')
     setSendAmount('')
     setSendMemo('')

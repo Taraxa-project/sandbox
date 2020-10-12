@@ -6,7 +6,6 @@ export default async function handler(req, res) {
     try {
         requestedSolc = await new Promise((resolve, reject) => {
             const versionString = solidityVersion.replace(/\.js$/, '').replace(/^soljson-/, '')
-            console.log('Getting remote solidity version', versionString);
             solc.loadRemoteVersion(versionString, (err, loaded) => {
                 if (err) {
                     return reject(err);
@@ -35,12 +34,15 @@ export default async function handler(req, res) {
     };
 
     input.sources[name] = {content: source};
-    const output = JSON.parse(
-        requestedSolc.compile(JSON.stringify(input), {})
-    );
+    const compiledRaw = requestedSolc.compile(JSON.stringify(input))
+    const output = JSON.parse(compiledRaw);
 
     if (output.errors) {
-        return res.status(500).json({error: 'Could not compile the contract: ' + output.errors[0].message});
+        output.errors.forEach(oe => {
+            if (oe.severity !== 'warning') {
+                return res.status(500).json({error: 'Could not compile the contract: ' + output.errors[0].message});
+            }
+        })
     } else {
         compiled = output.contracts[name]
     }
