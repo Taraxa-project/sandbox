@@ -47,7 +47,7 @@ export function Contract({name, contracts, solidityReleases, solidityVersion, se
             console.log('Deployment Tx', deploymentTx)
             // deploymentTx.from = wallet.address;
             // deploymentTx.to = wallet.address;
-            deploymentTx.nonce = 6;
+            // deploymentTx.nonce = 6;
             deploymentTx.value = 0;
             deploymentTx.chainId = 4444;
             // deploymentTx.gas = 21000;
