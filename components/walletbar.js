@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { ethers } from 'ethers'
+import {ethers} from 'ethers'
 
 import {Container, Row, Col, Card, Form, Dropdown, Table} from 'react-bootstrap'
 
@@ -37,7 +37,7 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
         <>
         <Container className="walletbar">
           <Row>
-            <Col xs={{order: 'last', cols: 12}} lg={2}>
+            <Col xs={{order: 'last', cols: 12}} lg={9}>
                 <Table style={{margin: 0}}>
                     <tbody>
                         <tr>
@@ -53,7 +53,7 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
                                 Balance:
                             </td>
                             <td style={{margin: 0, padding: 1, fontSize: 12, border: 'none'}}>
-                                {balance.toFixed(9)} TARA
+                                {ethers.FixedNumber.fromValue(BigInt(balance), 18, "fixed").round(6).toString()} TARA
                             </td>
                         </tr>
                         <tr>
@@ -61,7 +61,7 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
                                 Staking:
                             </td>
                             <td style={{margin: 0, padding: 1, fontSize: 12, border: 'none'}}>
-                                {(staking).toFixed(9)} TARA
+                                {ethers.FixedNumber.fromValue(BigInt(staking), 18, "fixed").round(6).toString()} TARA
                             </td>
                         </tr>
                     </tbody>

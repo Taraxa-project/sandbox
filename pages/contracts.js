@@ -55,7 +55,7 @@ export function Contracts({contracts, addContractSource, version}) {
                                 <Card.Header>
                                     Contracts
                                 </Card.Header>
-                                    <ListGroup>
+                                    <ListGroup variant="flush">
                                         {Object.keys(contracts).sort().map(name => (
                                             <ListGroup.Item key={name}>
                                                  <Link href="/contract/[id]" as={`/contract/${name}`}>

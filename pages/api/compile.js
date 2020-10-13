@@ -43,9 +43,9 @@ export default async function handler(req, res) {
                 return res.status(500).json({error: 'Could not compile the contract: ' + output.errors[0].message});
             }
         })
-    } else {
-        compiled = output.contracts[name]
     }
+        
+    compiled = output.contracts[name]
 
     res.json({
         name,
