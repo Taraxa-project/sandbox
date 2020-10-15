@@ -1,9 +1,11 @@
 import {Button, Container, Row, Col, Card, ListGroup, ListGroupItem, InputGroup, FormControl, Form, Nav, Navbar} from 'react-bootstrap'
 import Link from 'next/link'
 
+import getConfig from 'next/config'
+
 export default function Navigation() {
 
-    const explorerUrl = process.env.NEXT_PUBLIC_EXPLORER_URL || 'http://localhost:3000'
+    const { publicRuntimeConfig } = getConfig()
 
     return (<>
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -40,8 +42,8 @@ export default function Navigation() {
                     <Nav.Link href="/staking">Staking</Nav.Link>
                 </Link>
 
-                <Nav.Link href={explorerUrl} target="explorer">Explorer</Nav.Link>
-                <Nav.Link href={explorerUrl+'/faucet'}  target="explorer">Faucet</Nav.Link>
+                <Nav.Link href={publicRuntimeConfig.NEXT_PUBLIC_EXPLORER_URL} target="explorer">Explorer</Nav.Link>
+                <Nav.Link href={publicRuntimeConfig.NEXT_PUBLIC_EXPLORER_URL+'/faucet'}  target="explorer">Faucet</Nav.Link>
 
                 <Link href="/settings" as={`/settings`}>
                     <Nav.Link href="/settings">Settings</Nav.Link>

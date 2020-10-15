@@ -15,13 +15,17 @@ import { setAddress, setPath, setPrivateKey } from '../store/wallet/action'
 
 import { setHttpProvider } from '../store/provider/action'
 
+import getConfig from 'next/config'
+
 export function Login({mnemonic, address, privateKey, path, httpProvider, setHttpProvider, setMnemonic, setPath, setPrivateKey, setAddress}) {
+    const { publicRuntimeConfig } = getConfig()
+    console.log(httpProvider, publicRuntimeConfig.NEXT_PUBLIC_DEFAULT_RPC)
     const inputFile = useRef(null) 
     const [newMnemonic, setNewMnemonic] = useState(mnemonic);
     const [newPath, setNewPath] = useState(path);
     const [newAddress, setNewAddress] = useState(address);
     const [newPrivateKey, setNewPrivateKey] = useState(privateKey);
-    const [newHttpProvider, setNewHttpProvider] = useState(httpProvider);
+    const [newHttpProvider, setNewHttpProvider] = useState(httpProvider || publicRuntimeConfig.NEXT_PUBLIC_DEFAULT_RPC);
 
     function createNewMnemonic() {
       const wallet = ethers.Wallet.createRandom();
@@ -149,3 +153,7 @@ const mapDispatchToProps = (dispatch) => {
 }
   
 export default connect(mapStateToProps, mapDispatchToProps)(Login)
+
+export const getServerSideProps = async (ctx) => {
+  return {}
+}

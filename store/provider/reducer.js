@@ -1,7 +1,7 @@
 import { providerActionTypes } from './action'
 
 const initialState = {
-  http: 'http://localhost:7777',
+  http: '',
 }
 
 export default function reducer(state = initialState, action) {

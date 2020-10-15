@@ -12,7 +12,6 @@ import wallet from './wallet/reducer'
 import solidity from './solidity/reducer'
 import contract from './contract/reducer'
 
-
 let store;
 
 const bindMiddleware = (middleware) => {
@@ -56,7 +55,7 @@ function makeStore(initialState = {
     privateKey: ''
   },
   provider: {
-    http: 'http://localhost:7777'
+    http: '',
   },
   wallet: {
     nonce: 0,
