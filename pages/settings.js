@@ -155,5 +155,5 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Login)
 
 export const getServerSideProps = async (ctx) => {
-  return {}
+  return {props: {}}
 }

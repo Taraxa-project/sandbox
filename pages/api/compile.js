@@ -15,8 +15,7 @@ export default async function handler(req, res) {
         })
     } catch (e) {
         console.error(e);
-        res.status(500).json({error: 'Could not load requested version'});
-
+        return res.status(500).json({error: 'Could not load requested compiler'});
     }
 
     let compiled = {};
@@ -35,7 +34,13 @@ export default async function handler(req, res) {
 
     input.sources[name] = {content: source};
     const compiledRaw = requestedSolc.compile(JSON.stringify(input))
-    const output = JSON.parse(compiledRaw);
+    let output;
+    try {
+        output = JSON.parse(compiledRaw);
+    } catch (e) {
+        console.error(e)
+        return res.status(500).json({error: 'Could not parse compiled contract'});
+    }
 
     if (output.errors) {
         output.errors.forEach(oe => {

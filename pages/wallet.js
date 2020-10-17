@@ -42,7 +42,7 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
 
   function updateSendAmount(e) {
       if (e.target.value) {
-        setSendAmount(parseInt(e.target.value));
+        setSendAmount(parseFloat(e.target.value) * 1e18);
       } else {
         setSendAmount('');
       }

@@ -105,6 +105,7 @@ export function Contract({name, contracts, solidityReleases, solidityVersion, se
     }
 
     function compile(solidityVersion, name, source) {
+        console.log('Compile contract', solidityVersion, name, source)
         fetch('/api/compile', {
             method: 'POST',
             headers: {
