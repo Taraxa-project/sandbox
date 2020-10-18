@@ -13,14 +13,6 @@ import {setContractCompiled} from '../../store/contract/action'
 
 import {Button, Container, Row, Col, Card, Form, ListGroup, Nav} from 'react-bootstrap'
 
-export async function getServerSideProps(context) {
-    let props = {
-        name: context.query.id
-    };
-
-    return {props}
-}
-
 export function Contract({name, contracts, solidityReleases, solidityVersion, setSolidityVersion, setReleases, setContractCompiled, contractState, httpProvider, privateKey}) {
 
     const [view, setView] = useState('source')
@@ -349,8 +341,12 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export const getServerSideProps = async (ctx) => {
-    return {props: {}}
+export async function getServerSideProps(context) {
+    let props = {
+        name: context.query.id
+    };
+
+    return {props}
 }
   
 export default connect(mapStateToProps, mapDispatchToProps)(Contract)
