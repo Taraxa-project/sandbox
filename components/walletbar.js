@@ -53,7 +53,7 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
                                 Balance:
                             </td>
                             <td style={{margin: 0, padding: 1, fontSize: 12, border: 'none'}}>
-                                {ethers.FixedNumber.fromValue(BigInt(balance), 18, "fixed").round(6).toString()} TARA
+                                {ethers.FixedNumber.fromValue(balance.toString(), 18, "fixed").round(6).toString()} TARA
                             </td>
                         </tr>
                         <tr>
@@ -61,7 +61,7 @@ export function WalletBar({pageTitle = '', privateKey, address = '', path, mnemo
                                 Staking:
                             </td>
                             <td style={{margin: 0, padding: 1, fontSize: 12, border: 'none'}}>
-                                {ethers.FixedNumber.fromValue(BigInt(staking), 18, "fixed").round(6).toString()} TARA
+                                {ethers.FixedNumber.fromValue(staking.toString(), 18, "fixed").round(6).toString()} TARA
                             </td>
                         </tr>
                     </tbody>
