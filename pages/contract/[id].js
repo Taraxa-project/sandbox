@@ -347,6 +347,10 @@ const mapDispatchToProps = (dispatch) => {
       setSolidityVersion: bindActionCreators(setSolidityVersion, dispatch),
       setContractCompiled: bindActionCreators(setContractCompiled, dispatch),
     }
-  }
+}
+
+export const getServerSideProps = async (ctx) => {
+    return {props: {}}
+}
   
 export default connect(mapStateToProps, mapDispatchToProps)(Contract)

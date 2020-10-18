@@ -91,5 +91,9 @@ const mapDispatchToProps = (dispatch) => {
         addContractSource: bindActionCreators(addContractSource, dispatch),
     }
 }
+
+export const getServerSideProps = async (ctx) => {
+    return {props: {}}
+}
   
 export default connect(mapStateToProps, mapDispatchToProps)(Contracts)

@@ -151,9 +151,9 @@ const mapDispatchToProps = (dispatch) => {
         setAddress: bindActionCreators(setAddress, dispatch),
     }
 }
-  
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
 
 export const getServerSideProps = async (ctx) => {
   return {props: {}}
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

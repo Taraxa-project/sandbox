@@ -10,3 +10,7 @@ export default function Validator() {
         </>
     )
 }
+
+export const getServerSideProps = async (ctx) => {
+    return {props: {}}
+  }

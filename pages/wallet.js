@@ -128,4 +128,8 @@ const mapStateToProps = (state) => {
   }
 }
 
+export const getServerSideProps = async (ctx) => {
+  return {props: {}}
+}
+
 export default connect(mapStateToProps)(Wallet)
