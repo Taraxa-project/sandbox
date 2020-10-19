@@ -77,7 +77,7 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
                                 <Form.Control type="text" placeholder="Recipient's Address" value={recipientAddress} onChange={updateRecipientAddress}/>
                             </Form.Group>
                             <Form.Group controlId="walletSend.sendAmount">
-                                <Form.Control type="number" min="1" placeholder="Amount" value={sendAmount} onChange={updateSendAmount}/>
+                                <Form.Control type="number" min="0" placeholder="Amount" value={sendAmount} onChange={updateSendAmount} step="0.000000000000000001"/>
                             </Form.Group>
                             <Form.Group controlId="walletSend.memo">
                                 <Form.Control type="text" placeholder="Memo" value={sendMemo} onChange={updateSendMemo}/>
