@@ -13,7 +13,7 @@ import Walletbar from '../components/walletbar';
 export function Wallet({privateKey, address = '', httpProvider, balance, nonce}) {
   const basePath = `m/44'/60'/0'/0/`;
   const [recipientAddress, setRecipientAddress] = useState('');
-  const [sendAmount, setSendAmount] = useState('');
+  const [sendAmount, setSendAmount] = useState(0);
   const [sendMemo, setSendMemo] = useState('');
   const [gasPrice, setGasPrice] = useState(1);
 
@@ -25,7 +25,7 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
     const tx = await wallet.sendTransaction({
         // from: address,
         to: recipientAddress,
-        value: sendAmount,
+        value: sendAmount  * 1e18,
         gasLimit: 21000,
         gasPrice
     });
@@ -42,7 +42,7 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
 
   function updateSendAmount(e) {
       if (e.target.value) {
-        setSendAmount(parseFloat(e.target.value) * 1e18);
+        setSendAmount(parseFloat(e.target.value));
       } else {
         setSendAmount('');
       }
