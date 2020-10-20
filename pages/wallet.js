@@ -14,7 +14,6 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
   const basePath = `m/44'/60'/0'/0/`;
   const [recipientAddress, setRecipientAddress] = useState('');
   const [sendAmount, setSendAmount] = useState(0);
-  const [sendMemo, setSendMemo] = useState('');
   const [gasPrice, setGasPrice] = useState(1);
 
   async function send() {
@@ -25,19 +24,23 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
     const tx = await wallet.sendTransaction({
         // from: address,
         to: recipientAddress,
-        value: sendAmount  * 1e18,
+        value: ethers.BigNumber.from(sendAmount).mul(ethers.BigNumber.from('0xde0b6b3a7640000')),
         gasLimit: 21000,
         gasPrice
     });
 
     setRecipientAddress('')
-    setSendAmount('')
     setSendMemo('')
     setGasPrice(1)
   }
 
   function updateRecipientAddress(e) {
-    setRecipientAddress(e.target.value);
+    const address = e.target.value;
+    if (ethers.utils.isAddress(address)) {
+      setRecipientAddress(address);
+    } else {
+      setRecipientAddress('');
+    }
   }
 
   function updateSendAmount(e) {
@@ -46,10 +49,6 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
       } else {
         setSendAmount('');
       }
-  }
-
-  function updateSendMemo(e) {
-    setSendMemo(e.target.value);
   }
 
   function updateGasPrice(e) {
@@ -74,13 +73,10 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
                         </Card.Header>
                         <Card.Body>
                             <Form.Group controlId="walletSend.recipientAddress">
-                                <Form.Control type="text" placeholder="Recipient's Address" value={recipientAddress} onChange={updateRecipientAddress}/>
+                                <Form.Control type="text" placeholder="Recipient's Address" isInvalid={!recipientAddress} onChange={updateRecipientAddress}/>
                             </Form.Group>
                             <Form.Group controlId="walletSend.sendAmount">
                                 <Form.Control type="number" min="0" placeholder="Amount" value={sendAmount} onChange={updateSendAmount} step="0.000000000000000001"/>
-                            </Form.Group>
-                            <Form.Group controlId="walletSend.memo">
-                                <Form.Control type="text" placeholder="Memo" value={sendMemo} onChange={updateSendMemo}/>
                             </Form.Group>
                             <Form.Group controlId="walletSend.gasPrice">
                                 <Form.Label>Gas Price {gasPrice}</Form.Label>
@@ -89,7 +85,7 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
                     
                         </Card.Body>
                         <Card.Footer>
-                            <Button variant="success" onClick={send}>Send</Button>
+                            <Button variant="success" disabled={!recipientAddress} onClick={send}>Send</Button>
                         </Card.Footer>
                     </Card>
                 </Form>
