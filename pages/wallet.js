@@ -27,7 +27,7 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
         
         //CONCERN: Made this change back due to undeflow, but now we must worry about overflow... 
         //value: ethers.BigNumber.from('0xde0b6b3a7640000').mul(ethers.BigNumber.from(sendAmount)),
-        value: ethers.BigNumber.from(sendAmount  * 1e18),
+        value: ethers.BigNumber.from((sendAmount  * 1e6)).mul(ethers.BigNumber.from('0xe8d4a51000')),
         gasLimit: 21000,
         gasPrice
     });
