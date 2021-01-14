@@ -24,13 +24,13 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
     const tx = await wallet.sendTransaction({
         // from: address,
         to: recipientAddress,
-        value: ethers.BigNumber.from(sendAmount).mul(ethers.BigNumber.from('0xde0b6b3a7640000')),
+        value: ethers.BigNumber.from('0xde0b6b3a7640000').mul(ethers.BigNumber.from(sendAmount)),
         gasLimit: 21000,
         gasPrice
     });
 
     setRecipientAddress('')
-    setSendMemo('')
+    //setSendMemo('')
     setGasPrice(1)
   }
 
