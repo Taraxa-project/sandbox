@@ -24,7 +24,10 @@ export function Wallet({privateKey, address = '', httpProvider, balance, nonce})
     const tx = await wallet.sendTransaction({
         // from: address,
         to: recipientAddress,
-        value: ethers.BigNumber.from('0xde0b6b3a7640000').mul(ethers.BigNumber.from(sendAmount)),
+        
+        //CONCERN: Made this change back due to undeflow, but now we must worry about overflow... 
+        //value: ethers.BigNumber.from('0xde0b6b3a7640000').mul(ethers.BigNumber.from(sendAmount)),
+        value: ethers.BigNumber.from(sendAmount  * 1e18),
         gasLimit: 21000,
         gasPrice
     });
